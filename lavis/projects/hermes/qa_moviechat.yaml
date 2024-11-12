@@ -79,7 +79,7 @@ run:
   valid_splits: ["val"]
   test_splits: []
 
-  device: "cuda"
+  device: "cpu"
   world_size: 1
   dist_url: "env://"
   distributed: True
