@@ -25,6 +25,7 @@ from lavis.datasets.datasets.msrvtt_vqa_datasets import (
 )
 from lavis.datasets.datasets.msvd_vqa_datasets import MSVDVQADataset, MSVDVQAEvalDataset
 from lavis.datasets.datasets.video_vqa_datasets import VideoQADataset
+import warnings
 
 
 class VideoQABuilder(BaseDatasetBuilder):
