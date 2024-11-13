@@ -1,0 +1,106 @@
+run:
+  task: vqa
+  lr_sched: linear_warmup_cosine_lr
+  init_lr: 0.0001
+  min_lr: 0
+  warmup_lr: 1.0e-08
+  warmup_steps: 1000
+  weight_decay: 0.05
+  max_epoch: 5
+  batch_size_train: 8
+  batch_size_eval: 8
+  num_workers: 12
+  accum_grad_iters: 1
+  max_len: 10
+  min_len: 1
+  num_beams: 5
+  inference_method: generate
+  prompt: 'Question: {} Short answer:'
+  seed: 42
+  output_dir: output
+  amp: true
+  resume_ckpt_path: null
+  evaluate: true
+  train_splits:
+  - train
+  valid_splits:
+  - test
+  test_splits: []
+  device: cpu
+  world_size: 4
+  dist_url: env://
+  distributed: true
+  report_metric: true
+  suffix: null
+  prefix: test
+  rank: 0
+  gpu: 0
+  dist_backend: gloo
+  log_dir: lavis/output/moviechat_qa/blip2_vicuna_instruct_vicuna7b/test/b8_e5_lr0.0001_wd0.05_q32_f100_fb20_fg20_wz10_freezevit
+model:
+  arch: blip2_vicuna_instruct_hermes
+  load_finetuned: false
+  load_pretrained: true
+  pretrained: https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/InstructBLIP/instruct_blip_vicuna7b_trimmed.pth
+  finetuned: ''
+  image_size: 224
+  drop_path_rate: 0
+  use_grad_checkpoint: false
+  vit_precision: fp16
+  freeze_vit: true
+  num_query_token: 32
+  llm_model: llm/vicuna-7b
+  prompt: ''
+  model_type: vicuna7b
+  memory_bank_length: 20
+  num_frames: 100
+  window_size: 10
+  num_frames_global: 20
+  trail_percentage: 0.02
+  is_zero_shot: true
+preprocess:
+  vis_processor:
+    train:
+      name: blip2_image_train
+      image_size: 224
+    eval:
+      name: blip_image_eval
+      image_size: 224
+  text_processor:
+    train:
+      name: blip_caption
+    eval:
+      name: blip_caption
+datasets:
+  moviechat_qa:
+    data_type: videos
+    build_info:
+      annotations:
+        train:
+          url: moviechat/annotation/train.json
+          storage: moviechat/annotation/train.json
+        val:
+          url: moviechat/annotation/test.json
+          storage: moviechat/annotation/test.json
+        test:
+          url: moviechat/annotation/test.json
+          storage: moviechat/annotation/test.json
+      videos:
+        storage: moviechat/frames
+      instance_id_key: question_id
+    vis_processor:
+      train:
+        name: blip2_video_train
+        image_size: 224
+      eval:
+        name: blip2_video_eval
+        image_size: 224
+    text_processor:
+      train:
+        name: blip_question
+        prompt: 'Question: {} Short answer:'
+      eval:
+        name: blip_question
+        prompt: ''
+    num_frames: 100
+    trail_percentage: 0.01
